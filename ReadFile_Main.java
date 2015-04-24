@@ -1,10 +1,10 @@
 
 public class ReadFile_Main {
 	public static void main (String[] args) {
-		ReadFile readObj = new ReadFile();
+		ReadFile fileObj = new ReadFile();
 		
-		readObj.openFile();
-		readObj.readFile();
-		readObj.closeScanner();
+		fileObj.fileOpen();
+		fileObj.fileRead();
+		fileObj.fileClose();
 	}
 }

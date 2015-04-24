@@ -2,34 +2,32 @@ import java.util.*;
 import java.io.*;
 
 public class ReadFile {
+	Scanner input;
+	String file = "textfile.txt";
 	
-	private Scanner input;
-	private String fileName = "textfile.txt";
-	
-	// open/create file
-	
-	public void openFile() {
+	// initialize Scanner object with anonymous File object
+	public void fileOpen () {
 		try {
-			input = new Scanner(new File(fileName));
-			System.out.println(String.format("%s opened/created", fileName));
+			input = new Scanner(new File(file));
+			System.out.println("file created");
 		} catch (Exception e) {
-			System.out.println("could not open file");
+			System.out.println("file could not be created");
 		}
 	}
 	
-	// read file
-	
-	public void readFile() {
+	// read File being scanned by Scanner object
+	public void fileRead() {
+		String a, b;
+		
 		while (input.hasNext()) {
-			String a = input.next();
-			String b = input.next();
-			
-			System.out.printf("%s %s\n",  a, b);
+			a = input.next();
+			b = input.next();
+			System.out.printf("%s %s\n", a, b);
 		}
 	}
 	
-	// close scanner
-	public void closeScanner() {
+	// close Scanner object
+	public void fileClose() {
 		input.close();
 	}
 }
