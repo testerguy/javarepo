@@ -3,17 +3,17 @@ import javax.swing.*;
 
 public class DrawGraphics extends JPanel {
 	
-	public void paintComponent(Graphics g) {
+	public void paintComponent (Graphics g) {
 		super.paintComponent(g);
 		this.setBackground(Color.WHITE);
 		
-		g.setColor(Color.BLUE);
+		g.setColor(Color.RED);
 		g.fillRect(100, 25, 100, 50);
 		
-		g.setColor(new Color(250,250,0));
-		g.fillRect(100, 100, 100, 50);
+		g.setColor(Color.BLUE);
+		g.fillRect(100, 150, 100, 75);
 		
-		g.setColor(Color.RED);
-		g.drawString("This is string", 100, 200);
+		g.setColor(Color.ORANGE);
+		g.drawString("this is a string", 100, 300);
 	}
 }

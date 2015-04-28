@@ -3,11 +3,12 @@ import javax.swing.*;
 public class DrawGraphics_Main {
 	public static void main (String[] args) {
 		JFrame j = new JFrame();
-		j.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		DrawGraphics p = new DrawGraphics();
+		j.add(p);
 		
-		DrawGraphics drawObj = new DrawGraphics();
-		j.add(drawObj);
-		j.setSize(500,600);
+		j.setSize(500,500);
+		j.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		j.setVisible(true);
+		
 	}
 }
