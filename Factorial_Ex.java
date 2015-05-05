@@ -1,7 +1,7 @@
 
 public class Factorial_Ex {
 	public static void main(String[] args) {
-		System.out.println(fact(5));
+		System.out.println(fact(8));
 	}
 	
 	public static long fact(long n) {
