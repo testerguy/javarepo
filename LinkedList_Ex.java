@@ -2,28 +2,59 @@ import java.util.*;
 
 public class LinkedList_Ex {
 	public static void main(String[] args) {
-		// create array of String objects
-		String[] strArr1 = {"tree", "rain", "fire", "earth", "stone", "gold"};
+		// declare array of String objects
+		String[] strArr1 = {"wind", "rain", "fire", "earth"};
 		
-		// create List type collection for String objects
+		// declare List type collection for String objects
 		List<String> list1 = new LinkedList();
 		
-		// add String objects in array to List type collection
+		// populate List type collection with String objects stored in array elements
 		for (String x : strArr1)
 			list1.add(x);
 		
-		// create second array of String ojects
-		String[] strArr2 = {"silver", "bronze", "grain", "fruit", "milk"};
+		// repeat for second array and List type collection
 		
-		// create second List type collection for String objects
+		String[] strArr2 = {"steel", "gold", "silver", "bronze"};
+		
 		List<String> list2 = new LinkedList();
 		
-		// add String objecets of second array to second List type collection
 		for (String x : strArr2)
 			list2.add(x);
 		
-		// add the second List type collection to the first
+		// second list to first list
+		list1.addAll(list2);
 		
+		list2 = null;
 		
+		// print list 1
+		printList(list1);
+		
+		// remove two objects of first List type collection
+		removeObjs(list1, 2, 5);
+		
+		// print list 1 again
+		printList(list1);
+		
+		// print List type collection in reverse
+		reverseList(list1);
+	}
+	
+	public static void printList(List l1) {
+		for (int i = 0; i < l1.size(); i++)
+			System.out.printf("%s ", l1.get(i));
+		System.out.println();
+	}
+	
+	public static void removeObjs(List l1, int a, int b) {
+		l1.subList(a, b).clear();		
+	}
+	
+	public static void reverseList(List l1) {
+		// declare Linked List iterator
+		ListIterator<String> it = l1.listIterator(l1.size());
+		
+		while (it.hasPrevious()) {
+			System.out.printf("%s ", it.previous());
+		}
 	}
 }
