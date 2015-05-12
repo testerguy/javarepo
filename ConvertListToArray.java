@@ -16,7 +16,7 @@ public class ConvertListToArray {
 		// convert list back into array
 		strArray = list1.toArray(new String[list1.size()]);
 		
-		// run enhanced for loop to display eacH String object in strArray
+		// run enhanced for loop to display each String object in strArray
 		
 		for (String x : strArray)
 			System.out.printf("%s ",x);
