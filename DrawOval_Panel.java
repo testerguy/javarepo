@@ -6,19 +6,18 @@ public class DrawOval_Panel extends JPanel {
 	
 	public void paintComponent (Graphics g) {
 		super.paintComponent(g);
-		
-		g.fillOval(25, 25, d, d);
+		g.setColor(Color.BLUE);
+		g.fillOval(170, 150, d, d);
 	}
 	
-	public void setD (int val) {
+	public void setD(int val) {
 		d = (val >= 0 ? val : 10);
 		repaint();
 	}
 	
 	public Dimension setPreferredSize() {
-		Dimension dim = new Dimension(200, 200);
-		
-		return dim;
+		Dimension returnVal = new Dimension(200, 200);
+		return returnVal;
 	}
 	
 	public Dimension setMinimumSize() {

@@ -3,30 +3,28 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 public class DrawOval_Frame extends JFrame {
-	DrawOval_Panel myPanel;
-	JSlider mySlider;
+	DrawOval_Panel panelObj;
+	JSlider sliderObj;
 	
 	public DrawOval_Frame() {
 		super("Oval maker");
 		
-		myPanel = new DrawOval_Panel();
-		myPanel.setBackground(Color.YELLOW);
+		panelObj = new DrawOval_Panel();
+		panelObj.setBackground(Color.YELLOW);
 		
-		mySlider = new JSlider(SwingConstants.HORIZONTAL, 0, 200, 10);
-		mySlider.setMajorTickSpacing(10);
-		mySlider.setPaintTicks(true);
+		sliderObj = new JSlider(SwingConstants.HORIZONTAL, 0, 200, 10);
+		sliderObj.setMajorTickSpacing(10);
+		sliderObj.setPaintTicks(true);
 		
-		mySlider.addChangeListener(
-			new ChangeListener() {
-				public void stateChanged (ChangeEvent e) {
-					myPanel.setD(mySlider.getValue());
+		sliderObj.addChangeListener(
+				new ChangeListener() {
+					public void stateChanged (ChangeEvent e) {
+						panelObj.setD(sliderObj.getValue());
+					}
 				}
-			}
 		);
 		
-		
-		
-		add(myPanel, BorderLayout.CENTER);
-		add(mySlider, BorderLayout.SOUTH);
+		add(panelObj, BorderLayout.CENTER);
+		add(sliderObj, BorderLayout.SOUTH);
 	}
 }
