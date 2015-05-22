@@ -13,18 +13,17 @@ public class BeginNetworking extends JApplet {
 	public void init() {
 		titles = new ArrayList<String>();
 		websiteInfo = new HashMap<String, URL>();
-		
 		getWebsiteInfo();
 		
 		mainList = new JList(titles.toArray());
 		
-		add(new JLabel("Please select a website"), BorderLayout.NORTH);
+		add(new JLabel("select a URL"), BorderLayout.NORTH);
 		
 		mainList.addListSelectionListener(
 				new ListSelectionListener() {
-					public void valueChanged(ListSelectionEvent e) {
-						Object obj = mainList.getSelectedValue();
-						URL url = websiteInfo.get(obj);
+					 	public void valueChanged(ListSelectionEvent event) {
+						Object o = mainList.getSelectedValue();
+						URL url = websiteInfo.get(o);
 						AppletContext browser = getAppletContext();
 						browser.showDocument(url);
 					}
@@ -38,21 +37,20 @@ public class BeginNetworking extends JApplet {
 		String title;
 		String address;
 		URL url;
-		
 		Integer counter = 0;
 		
 		title = getParameter("title"+counter);
-		
 		while (title != null) {
+			address = getParameter("address"+counter);
 			try {
-				address = getParameter("address"+counter);
 				url = new URL(address);
 				websiteInfo.put(title, url);
-				titles.add(title);
-			} catch (MalformedURLException mue) {
-				mue.printStackTrace();
+			} catch (MalformedURLException e) {
+				
 			}
 			counter++;
+			titles.add(title);
+			title = getParameter("title"+counter);
 		}
 	}
 }
