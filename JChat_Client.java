@@ -17,7 +17,7 @@ public class JChat_Client extends JFrame {
 		serverIP = host;
 		
 		userText = new JTextField();
-		userText.makeEditable(false);
+		makeEditable(false);
 		
 		userText.addActionListener(
 			new ActionListener() {
@@ -67,22 +67,18 @@ public class JChat_Client extends JFrame {
 		showMessage("streams set up!");
 	}
 	
-	public void whileChatting() {
+	public void whileChatting() throws IOException {
 		String message = "Chat started!";
 		showMessage(message);
+		makeEditable(true);
 		
 		do {
 			try {
-				try {
-					message = "SERVER - " + (String) input.readObject();
-					showMessage(message);
-				} catch(ClassNotFoundException cnfe) {
-					cnfe.printStackTrace();
-				}
-			} catch (IOException ioe) {
-				showMessage("couldn't understand message!");
+				message = "SERVER - " + (String) input.readObject();
+				showMessage(message);
+			} catch(ClassNotFoundException cnfe) {
+				cnfe.printStackTrace();
 			}
-				
 		} while (!message.equals("SERVER - END"));
 	}
 	
@@ -95,5 +91,37 @@ public class JChat_Client extends JFrame {
 					}
 				}
 		);
+	}
+	
+	public void sendMessage(String s) {
+		try {
+			output.writeObject(s);
+			String sendStr = "CLIENT - " + s;
+			showMessage(sendStr);
+		} catch (IOException ioe) {
+			showMessage("couldn't send!");
+		}
+	}
+	
+	public void makeEditable(final boolean tof) {
+		SwingUtilities.invokeLater(
+			new Runnable() {
+				public void run() {
+					userText.setEditable(tof);
+				}
+			}
+		);
+	}
+	
+	public void closeEverything() {
+		showMessage("closing everything!");
+		makeEditable(false);
+		try {
+			input.close();
+			output.close();
+			connection.close();
+		} catch(IOException ioe) {
+			showMessage("couldn't close!");
+		}
 	}
 }
