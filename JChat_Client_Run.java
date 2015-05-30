@@ -1,10 +1,11 @@
 import javax.swing.*;
 
-public class JChat_Server_Run {
+public class JChat_Client_Run {
 	public static void main(String[] args) {
-		JChat_Server chatObj = new JChat_Server();
+		JChat_Client chatObj = new JChat_Client();
 		
 		chatObj.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		chatObj.startRunning();
+		
+		chatObj.startRunning("127.0.0.1");
 	}
 }

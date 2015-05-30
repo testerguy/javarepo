@@ -13,119 +13,116 @@ public class JChat_Server extends JFrame {
 	private Socket connection;
 	
 	public JChat_Server() {
-		super("Java messenger program!");
+		super("Server Java Messenger");
 		
 		userText = new JTextField();
 		userText.setEditable(false);
 		
+		chatWindow = new JTextArea();
+		
 		userText.addActionListener(
 				new ActionListener() {
-					public void actionPerformed(ActionEvent event) {
-						try {
-							sendMessage(event.getActionCommand());
-						} catch (IOException ioException) {
-							showMessage("\nCouldn't send message!");
-						}
+					public void actionPerformed (ActionEvent event) {
+						sendMessage(event.getActionCommand());
 						userText.setText("");
 					}
 				}
 		);
-	add(userText, BorderLayout.SOUTH);
-	
-	setSize(500,500);
-	setVisible(true);
-	
-	chatWindow = new JTextArea();
-	add(chatWindow);
+		
+		add(userText, BorderLayout.SOUTH);
+		
+		add(new JScrollPane(chatWindow));
+		
+		setSize(400,300);
+		setVisible(true);
 	}
 	
-	public void startRunning() throws IOException {
-		// do infinite loop with while(true)
+	public void startRunning() {
 		try {
-			server = new ServerSocket(6789, 100);
+			server = new ServerSocket(5678, 100);
+			// run infinite loop with while(true)
 			while (true) {
 				try {
-					makeConnection();
+					waitForConnection();
 					setupStreams();
 					whileChatting();
-				} catch(EOFException eofException) {
-					eofException.printStackTrace();
-				} finally {
+				} catch(EOFException eofe) {
+					eofe.printStackTrace();
+				}
+				finally {
 					closeEverything();
 				}
 			}
-		} catch (IOException ioException) {
-			ioException.printStackTrace();
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
 		}
 	}
 	
-	public void makeConnection() throws IOException {
-		showMessage("waiting for connection..");
+	public void waitForConnection() throws IOException {
+		chatWindow.append("\nwaiting for connection..");
 		connection = server.accept();
-		showMessage("\nconnected to " + connection.getInetAddress().getHostName());
+		chatWindow.append("\nconnected to " + connection.getInetAddress().getHostName());
 	}
 	
 	public void setupStreams() throws IOException {
 		output = new ObjectOutputStream(connection.getOutputStream());
-		output.flush();
 		input = new ObjectInputStream(connection.getInputStream());
-		showMessage("\nstreams set up!");
+		
+		chatWindow.append("\nstreams setup!");
 	}
 	
 	public void whileChatting() throws IOException {
-		String message = "\nchat started!";
-		showMessage(message);
-		// do while (!message.equal("CLIENT - END")
+		String message = "\nready to chat!";
+		chatWindow.append(message);
+		makeEditable(true);
+		do {
+			try {
+				message = "CLIENT - " + (String) input.readObject();
+				showMessage(message);
+			} catch (ClassNotFoundException cnfe) {
+				cnfe.printStackTrace();
+			}
+		} while (!message.equals("CLIENT - END"));
+	}
+
+	public void sendMessage(String s) {
 		try {
-			makeEditable();
-			message = (String) input.readObject();
-			showMessage(message);
-		} catch (ClassNotFoundException classNotFoundException) {
-			classNotFoundException.printStackTrace();
+			output.writeObject(s);
+			showMessage("SERVER - " + s);
+		} catch (IOException ioe) {
+			chatWindow.append("\nsomething with wrong with the message send!");
 		}
+
 	}
 	
-	public void sendMessage(String s) throws IOException {
-		try {
-			String str = "SERVER - " + s;
-			output.writeObject(str);
-			output.flush();
-			showMessage("\n" + str);
-		} catch (IOException ioException) {
-			ioException.printStackTrace();
-		}
+	public void showMessage(final String s) {
+		SwingUtilities.invokeLater(
+				new Runnable() {
+					public void run() {
+						final String finalStr = "\n" + s;
+						chatWindow.append(finalStr);
+					}
+				}
+		);
 	}
 	
-	public void showMessage(final String str) {
-		// create a new thread
+	public void makeEditable(final boolean tof) {
 		SwingUtilities.invokeLater(
 			new Runnable() {
 				public void run() {
-					chatWindow.append(str);
+					userText.setEditable(tof);
 				}
 			}
 		);
 	}
 	
-	public void makeEditable() {
-		SwingUtilities.invokeLater(
-			new Runnable() {
-				public void run() {
-					userText.setEditable(true);
-				}
-			}
-		);
-	}
-	
-	public void closeEverything() throws IOException {
-		
-		showMessage("\nchat ending!");
+	public void closeEverything() {
 		try {
-			connection.close();
 			input.close();
 			output.close();
-		} catch (IOException ioException) {
-			ioException.printStackTrace();
+			connection.close();
+		} catch (IOException ioe) {
+			showMessage("couldn't close something!");
 		}
 	}
 }
