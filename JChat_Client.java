@@ -61,10 +61,10 @@ public class JChat_Client extends JFrame {
 		boolean connectionYN = true;
 		while (connectionYN) {
 			try {
-				connection = new Socket(InetAddress.getByName(serverIP), 4567);
+				connection = new Socket(InetAddress.getByName(serverIP), 4545);
 				showMessage("connected to " + connection.getInetAddress().getHostName());
 				connectionYN = false;
-			} catch(IOException e) {
+			} catch(IOException ioe) {
 			}		
 		}
 	}
@@ -95,7 +95,7 @@ public class JChat_Client extends JFrame {
 	public void sendMessage(String s) {
 		try {
 			output.writeObject(s);
-			showMessage("SERVER - " + s);
+			showMessage("CLIENT - " + s);
 		} catch(IOException ioe) {
 			showMessage("couldn't send message!");
 		}

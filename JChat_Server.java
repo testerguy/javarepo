@@ -38,7 +38,7 @@ public class JChat_Server extends JFrame {
 	public void startRunning() {
 		// do infinite loop with while(true)
 		try {
-			server = new ServerSocket(4567, 100);
+			server = new ServerSocket(4545, 100);
 			try {
 				waitForConnection();
 				setupStreams();
