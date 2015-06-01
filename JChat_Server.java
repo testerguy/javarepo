@@ -9,100 +9,99 @@ public class JChat_Server extends JFrame {
 	private JTextArea chatWindow;
 	private ObjectOutputStream output;
 	private ObjectInputStream input;
-	private ServerSocket server;
 	private Socket connection;
+	private ServerSocket server;
 	
 	public JChat_Server() {
-		super("Server Java Messenger");
-		
+		super("Java Chat - Server");
 		userText = new JTextField();
-		userText.setEditable(false);
+		makeEditable(false);
 		
 		chatWindow = new JTextArea();
 		
 		userText.addActionListener(
-				new ActionListener() {
-					public void actionPerformed (ActionEvent event) {
-						sendMessage(event.getActionCommand());
-						userText.setText("");
-					}
+			new ActionListener() {
+				public void actionPerformed(ActionEvent event) {
+					sendMessage(event.getActionCommand());
+					userText.setText("");
 				}
+			}
 		);
 		
 		add(userText, BorderLayout.SOUTH);
-		
 		add(new JScrollPane(chatWindow));
 		
-		setSize(400,300);
+		setSize(300,400);
 		setVisible(true);
 	}
 	
 	public void startRunning() {
+		// do infinite loop with while(true)
 		try {
-			server = new ServerSocket(5678, 100);
-			// run infinite loop with while(true)
-			while (true) {
-				try {
-					waitForConnection();
-					setupStreams();
-					whileChatting();
-				} catch(EOFException eofe) {
-					eofe.printStackTrace();
-				}
-				finally {
-					closeEverything();
-				}
+			server = new ServerSocket(4567, 100);
+			try {
+				waitForConnection();
+				setupStreams();
+				whileChatting();
+			} catch(EOFException eofe) {
+				eofe.printStackTrace();
+			} finally {
+				closeEverything();
 			}
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
+		} catch(IOException ioe) {
+			showMessage("couldn't start server!");
 		}
+		
 	}
 	
 	public void waitForConnection() throws IOException {
-		chatWindow.append("\nwaiting for connection..");
+		showMessage("waiting for connection.. ");
 		connection = server.accept();
-		chatWindow.append("\nconnected to " + connection.getInetAddress().getHostName());
+		showMessage("connected to " + connection.getInetAddress().getHostName());
 	}
 	
 	public void setupStreams() throws IOException {
-		output = new ObjectOutputStream(connection.getOutputStream());
 		input = new ObjectInputStream(connection.getInputStream());
-		
-		chatWindow.append("\nstreams setup!");
+		output = new ObjectOutputStream(connection.getOutputStream());
+		showMessage("streams set up!");
 	}
 	
 	public void whileChatting() throws IOException {
-		String message = "\nready to chat!";
-		chatWindow.append(message);
+		
+		String message = "Start chatting!";
+		showMessage(message);
+		
+		// make userText field editable
 		makeEditable(true);
+		
+		// do while (!message.equals("CLIENT - END"));
 		do {
 			try {
 				message = "CLIENT - " + (String) input.readObject();
 				showMessage(message);
-			} catch (ClassNotFoundException cnfe) {
+			} catch(ClassNotFoundException cnfe) {
 				cnfe.printStackTrace();
 			}
-		} while (!message.equals("CLIENT - END"));
+		} while(!message.equals("CLIENT - END"));
 	}
-
+	
 	public void sendMessage(String s) {
 		try {
 			output.writeObject(s);
 			showMessage("SERVER - " + s);
-		} catch (IOException ioe) {
-			chatWindow.append("\nsomething with wrong with the message send!");
+		} catch(IOException ioe) {
+			showMessage("couldn't send message!");
 		}
-
 	}
 	
 	public void showMessage(final String s) {
 		SwingUtilities.invokeLater(
-				new Runnable() {
-					public void run() {
-						final String finalStr = "\n" + s;
-						chatWindow.append(finalStr);
-					}
+			new Runnable() {
+				public void run() {
+					final String finalStr = "\n" + s;
+					chatWindow.append(finalStr);
 				}
+			}
 		);
 	}
 	
@@ -117,12 +116,15 @@ public class JChat_Server extends JFrame {
 	}
 	
 	public void closeEverything() {
+		makeEditable(false);
+		showMessage("closing everything!");
+		
 		try {
 			input.close();
 			output.close();
 			connection.close();
-		} catch (IOException ioe) {
-			showMessage("couldn't close something!");
+		} catch(IOException ioexception) {
+			showMessage("couldn't close everything!");
 		}
 	}
 }

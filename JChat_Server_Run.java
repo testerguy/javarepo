@@ -5,6 +5,7 @@ public class JChat_Server_Run {
 		JChat_Server chatObj = new JChat_Server();
 		
 		chatObj.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
 		chatObj.startRunning();
 	}
 }

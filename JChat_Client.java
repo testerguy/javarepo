@@ -1,6 +1,6 @@
 import java.awt.*;
-import java.io.*;
 import java.net.*;
+import java.io.*;
 import java.awt.event.*;
 import javax.swing.*;
 
@@ -9,19 +9,21 @@ public class JChat_Client extends JFrame {
 	private JTextArea chatWindow;
 	private ObjectOutputStream output;
 	private ObjectInputStream input;
-	private String serverIP;
 	private Socket connection;
+	private String serverIP;
 	
-	public JChat_Client (String host) {
-		super("Client Java Messenger");
-		serverIP = host;
+	public JChat_Client(String host) {
+		super("Java Chat Client");
 		
+		serverIP = host;
+	
 		userText = new JTextField();
 		makeEditable(false);
+		chatWindow = new JTextArea();
 		
 		userText.addActionListener(
 			new ActionListener() {
-				public void actionPerformed (ActionEvent event) {
+				public void actionPerformed(ActionEvent event) {
 					sendMessage(event.getActionCommand());
 					userText.setText("");
 				}
@@ -29,78 +31,85 @@ public class JChat_Client extends JFrame {
 		);
 		
 		add(userText, BorderLayout.SOUTH);
-		
-		chatWindow = new JTextArea();
 		add(new JScrollPane(chatWindow));
 		
-		setSize(400,300);
+		setSize(300,400);
 		setVisible(true);
 	}
 	
 	public void startRunning() {
-		try {
+		try{
 			// do infinite loop with while(true)
-			while (true) {
+			while(true) {
 				try {
 					connectToServer();
 					setupStreams();
 					whileChatting();
 				} catch(EOFException eofe) {
 					eofe.printStackTrace();
+				} finally {
+					closeEverything();
 				}
 			}
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
+		} catch(IOException ioe) {
+			showMessage("something went wrong!");
 		}
 	}
 	
 	public void connectToServer() throws IOException {
-		showMessage("trying to connect.. ");
-		connection = new Socket(InetAddress.getByName(serverIP), 5678);
-		showMessage("connected to server at " + connection.getInetAddress().getHostName());
+		showMessage("trying to connect to Server..");
+		boolean connectionYN = true;
+		while (connectionYN) {
+			try {
+				connection = new Socket(InetAddress.getByName(serverIP), 4567);
+				showMessage("connected to " + connection.getInetAddress().getHostName());
+				connectionYN = false;
+			} catch(IOException e) {
+			}		
+		}
 	}
 	
 	public void setupStreams() throws IOException {
-		showMessage("setting up streams..");
-		input = new ObjectInputStream(connection.getInputStream());
 		output = new ObjectOutputStream(connection.getOutputStream());
+		input = new ObjectInputStream(connection.getInputStream());
 		showMessage("streams set up!");
 	}
 	
 	public void whileChatting() throws IOException {
-		String message = "Chat started!";
-		showMessage(message);
+		// make userText field editable
 		makeEditable(true);
 		
-		do {
-			try {
-				message = "SERVER - " + (String) input.readObject();
+		String message = "Start chatting";
+		showMessage(message);
+		try {
+			// chat while !message.equals("SERVER - END")
+			do {
+				message = "SERVER - " + (String)input.readObject();
 				showMessage(message);
-			} catch(ClassNotFoundException cnfe) {
-				cnfe.printStackTrace();
-			}
-		} while (!message.equals("SERVER - END"));
-	}
-	
-	public void showMessage(final String s) {
-		SwingUtilities.invokeLater(
-				new Runnable() {
-					public void run() {
-						final String finalStr = "\n" + s;
-						chatWindow.append(finalStr);
-					}
-				}
-		);
+			} while (!message.equals("SERVER - END"));
+		} catch(ClassNotFoundException cnfe) {
+			cnfe.printStackTrace();
+		}
 	}
 	
 	public void sendMessage(String s) {
 		try {
 			output.writeObject(s);
-			String sendStr = "CLIENT - " + s;
-			showMessage(sendStr);
-		} catch (IOException ioe) {
-			showMessage("couldn't send!");
+			showMessage("SERVER - " + s);
+		} catch(IOException ioe) {
+			showMessage("couldn't send message!");
 		}
+	}
+	
+	public void showMessage(final String s) {
+		SwingUtilities.invokeLater(
+			new Runnable() {
+				public void run() {
+					final String finalStr = "\n" + s;
+					chatWindow.append(finalStr);
+				}
+			}
+		);
 	}
 	
 	public void makeEditable(final boolean tof) {
@@ -114,14 +123,16 @@ public class JChat_Client extends JFrame {
 	}
 	
 	public void closeEverything() {
-		showMessage("closing everything!");
+		// make userText field uneditable again
 		makeEditable(false);
+		showMessage("closing everything!");
+
 		try {
-			input.close();
 			output.close();
+			input.close();
 			connection.close();
 		} catch(IOException ioe) {
-			showMessage("couldn't close!");
+			showMessage("Could not close everything!");
 		}
 	}
 }
